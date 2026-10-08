@@ -1,0 +1,3 @@
+{ // jsonc with comments
+  "compilerOptions": { "baseUrl": ".", "paths": { "@app/*": ["src/util/*"] } }
+}

@@ -1,0 +1,112 @@
+{
+  "name": "importtrace",
+  "displayName": "ImportTrace",
+  "description": "See your code as connected windows. Files are nodes, imports and includes are arrows.",
+  "version": "0.0.1",
+  "publisher": "YOUR_PUBLISHER_ID",
+  "icon": "media/icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/YOUR_USERNAME/ImportTrace.git"
+  },
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Visualization",
+    "Other"
+  ],
+  "main": "./dist/extension.js",
+  "activationEvents": [],
+  "contributes": {
+    "commands": [
+      {
+        "command": "importtrace.open",
+        "title": "ImportTrace: Show Map for Active File"
+      },
+      {
+        "command": "importtrace.openWorkspace",
+        "title": "ImportTrace: Show Whole Workspace"
+      },
+      {
+        "command": "importtrace.rescan",
+        "title": "ImportTrace: Rescan Workspace"
+      }
+    ],
+    "configuration": {
+      "title": "ImportTrace",
+      "properties": {
+        "importtrace.depth": {
+          "type": "number",
+          "default": 2,
+          "minimum": 1,
+          "maximum": 6,
+          "description": "How many import hops from the active file to show."
+        },
+        "importtrace.targetColor": {
+          "type": "string",
+          "default": "#FFD700",
+          "description": "The color used to highlight the currently focused target file."
+        },
+        "importtrace.exclude": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "**/node_modules/**",
+            "**/.git/**",
+            "**/dist/**",
+            "**/out/**",
+            "**/build/**",
+            "**/bin/**",
+            "**/obj/**",
+            "**/target/**",
+            "**/vendor/**",
+            "**/__pycache__/**",
+            "**/.venv/**",
+            "**/venv/**"
+          ],
+          "description": "Globs excluded from scanning."
+        },
+        "importtrace.maxFileSizeKB": {
+          "type": "number",
+          "default": 1024,
+          "description": "Files larger than this are skipped."
+        },
+        "importtrace.includeTestFiles": {
+          "type": "boolean",
+          "default": false,
+          "description": "Go only: link to _test.go files when an import resolves to a package."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "build": "node esbuild.mjs",
+    "watch": "node esbuild.mjs --watch",
+    "typecheck": "tsc --noEmit -p . && tsc --noEmit -p src/webview",
+    "smoke": "node esbuild.mjs --core && node scripts/smoke.mjs",
+    "package": "npm run build && vsce package"
+  },
+  "dependencies": {
+    "@dagrejs/dagre": "^3.1.1",
+    "@xyflow/react": "^12.12.0",
+    "highlight.js": "^11.12.0",
+    "jsonc-parser": "^3.3.1",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "tree-sitter-wasms": "^0.1.13",
+    "web-tree-sitter": "0.25.10"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.4",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@types/vscode": "1.90.0",
+    "@vscode/vsce": "^4.0.0",
+    "esbuild": "^0.28.2",
+    "typescript": "^7.0.2"
+  }
+}

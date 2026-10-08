@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "target": "ES2022", "module": "esnext", "moduleResolution": "bundler", "lib": ["ES2022"],
+    "strict": true, "esModuleInterop": true, "skipLibCheck": true, "noEmit": true, "types": ["node", "vscode"]
+  },
+  "include": ["src/core", "src/languages", "src/shared", "src/extension.ts", "src/host"],
+  "exclude": ["src/webview"]
+}
