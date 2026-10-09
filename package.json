@@ -3,7 +3,7 @@
   "displayName": "ImportTrace",
   "description": "See your code as connected windows. Files are nodes, imports and includes are arrows.",
   "version": "0.0.1",
-  "publisher": "YOUR_PUBLISHER_ID",
+  "publisher": "mart-dev",
   "icon": "media/icon.png",
   "repository": {
     "type": "git",
