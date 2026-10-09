@@ -2,53 +2,45 @@
 
 See your code as connected windows. Each file is a scrollable window; each `import` / `#include` / `using` is an arrow that starts on the exact line that causes it.
 
-Languages: **TypeScript / JavaScript, Python, C, C++, Java, Go, C#**.
+## Features
 
-## Run it
+- **Visual Code Navigation:** Instantly see how your files connect through imports.
+- **Line-Precise Arrows:** Arrows start from the exact line of the import statement.
+- **Scrollable Windows:** Read your code directly within the map nodes.
+- **Multi-Language Support:** Works out of the box with:
+  - TypeScript / JavaScript
+  - Python
+  - C / C++
+  - Java
+  - Go
+  - C#
 
-```bash
-npm install
-npm run build
-npm run smoke        # parses fixtures/ in all 7 languages and checks every expected edge
-```
+## Usage
 
-Press **F5** in VS Code (opens `fixtures/` in an Extension Development Host), then run
-`ImportTrace: Show Map for Active File` from the Command Palette.
+1. Open any supported code file in VS Code.
+2. Open the Command Palette (`Ctrl+Shift+P` or `Cmd+Shift+P` on Mac).
+3. Run **`ImportTrace: Show Map for Active File`** to trace the imports starting from your current file.
+4. Alternatively, use **`ImportTrace: Show Whole Workspace`** to visualize the entire project.
+5. If you've added new files or changed many imports, use **`ImportTrace: Rescan Workspace`** to update the map.
 
-No VS Code handy? `node esbuild.mjs --core && node scripts/preview.mjs && open dist/preview.html` renders the real UI with a mock host.
+## Extension Settings
 
-## How it works
+You can customize ImportTrace through VS Code settings:
 
-```
-src/core/        no vscode imports, fully testable
-  parser.ts        web-tree-sitter + WASM grammars
-  graph.ts         parse cache -> shared indexes -> edges
-src/languages/   one plugin per language: extract() + resolve()
-src/host/        scanner, file watchers, webview panel, license stub
-src/webview/     React Flow UI, virtualized code windows, arrow pins
-```
+* `importtrace.depth`: How many import hops from the active file to show (default: `2`, max: `6`).
+* `importtrace.targetColor`: The color used to highlight the currently focused target file.
+* `importtrace.exclude`: Globs excluded from scanning (e.g., `node_modules`, `.git`, `dist`).
+* `importtrace.maxFileSizeKB`: Files larger than this are skipped to keep performance smooth.
+* `importtrace.includeTestFiles`: (Go only) link to `_test.go` files when an import resolves to a package.
 
-| Language | Resolution |
-|---|---|
-| TS/JS | relative paths, extension + `index` guessing, `.js`->`.ts`, `tsconfig` `paths` / `baseUrl` |
-| Python | relative and absolute, `__init__.py`, `from pkg import submodule`, unique-suffix fallback for monorepos |
-| C / C++ | relative to file, `c_cpp_properties.json`, `compile_commands.json` (`-I`), unique-suffix fallback |
-| Java | package index (declared `package` -> files), wildcard, static, nested classes |
-| Go | `go.mod` module path -> package directory -> its files (tests excluded by default) |
-| C# | namespace index (block and file-scoped), `using static`, aliases |
+## Known Limitations
 
-## Add a language
+- Syntax highlighting is applied per line, so multi-line strings or block comments might lose formatting.
+- C#: Types in the *same* namespace that don't need a `using` statement will not show links.
+- Only the nearest `tsconfig.json` is consulted per file for TypeScript (ignores `extends` and project references).
+- Imports that resolve to more than 40 files are dropped to prevent massive UI clutter.
 
-1. Create `src/languages/<lang>.ts` implementing `LanguagePlugin`.
-2. Add it to `src/languages/index.ts`.
-3. Copy its grammar in `esbuild.mjs` (`copyWasm`) and register a highlighter in `src/webview/highlight.ts`.
-4. Add a fixture and expected edges to `scripts/smoke.mjs`.
+## Support
 
-## Known limitations
-
-- Syntax highlighting is per line, so block comments and multi-line strings lose their color. Fix: tokenize the whole file once (Shiki, or tree-sitter highlight queries in the host).
-- Imports that resolve to more than 40 files (huge C# namespaces, big Go packages) are dropped. Better: collapse into a single package node.
-- C#: types in the *same* namespace need no `using`, so those links are missing. Needs symbol-level indexing.
-- Python: `from . import x` also links to `__init__.py` (correct, but noisy).
-- C/C++ includes behind build-system-generated paths (UE5 `.Build.cs`) rely on the suffix fallback.
-- Only one `tsconfig.json` (nearest ancestor) is consulted per file; `extends` and project references are not followed.
+**Enjoying ImportTrace?** 
+[☕ Buy me a coffee](https://buymeacoffee.com/martin.p)
